@@ -12,6 +12,7 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../hooks/useAuth';
+import { ConfirmationModal } from '../components/confirmationModal';
 
 // API service functions
 const createAPIService = (auth) => {
@@ -95,6 +96,11 @@ export default function OrganizerDashboard() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    eventId: null,
+    eventTitle: ''
+  });
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -159,20 +165,33 @@ export default function OrganizerDashboard() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this event? This action cannot be undone.")) return;
+  const handleDeleteClick = (event) => {
+    setDeleteModal({
+      isOpen: true,
+      eventId: event.id,
+      eventTitle: event.title
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteModal.eventId) return;
     
     try {
       setLoading(true);
       setError(null);
-      await api.deleteEvent(id);
+      await api.deleteEvent(deleteModal.eventId);
       fetchEvents();
     } catch (error) {
       console.error("Error deleting event:", error);
       setError(error.message);
     } finally {
       setLoading(false);
+      setDeleteModal({ isOpen: false, eventId: null, eventTitle: '' });
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModal({ isOpen: false, eventId: null, eventTitle: '' });
   };
 
   const handleEdit = (event) => {
@@ -318,6 +337,19 @@ export default function OrganizerDashboard() {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={deleteModal.isOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Event"
+        message={`Are you sure you want to delete "${deleteModal.eventTitle}"? This action cannot be undone.`}
+        confirmText="Delete Event"
+        cancelText="Cancel"
+        type="danger"
+        loading={loading}
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -507,7 +539,7 @@ export default function OrganizerDashboard() {
                   key={event.id} 
                   event={event} 
                   onEdit={handleEdit}
-                  onDelete={handleDelete}
+                  onDelete={handleDeleteClick}
                   formatDate={formatDate}
                   formatTime={formatTime}
                 />
@@ -565,7 +597,7 @@ const EventCard = ({ event, onEdit, onDelete, formatDate, formatTime }) => (
             <PencilIcon className="w-4 h-4" />
           </button>
           <button
-            onClick={() => onDelete(event.id)}
+            onClick={() => onDelete(event)}
             className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors"
             title="Delete event"
           >
