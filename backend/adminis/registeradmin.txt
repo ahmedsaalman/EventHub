@@ -1,0 +1,11 @@
+from users.models import User
+
+User.objects.create_superuser(
+    email="admin1@example.com",
+    username="admin1",
+    password="yourpassword",
+    role="admin"
+)
+
+
+run this in shell
