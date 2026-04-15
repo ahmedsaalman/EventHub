@@ -1,32 +1,39 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
-from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from .services import AuthenticationService, TokenService
 
 class RegisterView(generics.CreateAPIView):
+    """View for user registration (SRP - only handles HTTP request/response)."""
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
 class LoginView(generics.GenericAPIView):
+    """View for user login (SRP - delegates authentication and token generation to services)."""
     permission_classes = [AllowAny]
-    serializer_class = LoginSerializer 
+    serializer_class = LoginSerializer
 
     def post(self, request):
-        email = request.data.get("email")
-        password = request.data.get("password")
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        email = serializer.validated_data.get("email")
+        password = serializer.validated_data.get("password")
 
-        user = authenticate(request, email=email, password=password)
+        # Delegate authentication to service (DIP)
+        user = AuthenticationService.authenticate_user(email, password, request)
 
         if user is not None:
-            refresh = RefreshToken.for_user(user)
+            # Delegate token generation to service (DIP)
+            tokens = TokenService.generate_tokens_for_user(user)
+            
             return Response({
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
+                **tokens,
                 "user": UserSerializer(user).data
             })
-        return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        return Response(
+            {"detail": "Invalid credentials"}, 
+            status=status.HTTP_401_UNAUTHORIZED
+        )
