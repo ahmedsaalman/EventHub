@@ -1,12 +1,41 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework import permissions
 
-class IsOrganizerOrReadOnly(BasePermission):
+class IsEventOrganizer(permissions.BasePermission):
     """
-    Allow only organizers to create/update/delete events.
-    Others can read-only.
+    Object-level permission to only allow organizers to edit events.
     """
     def has_permission(self, request, view):
-        if request.method in SAFE_METHODS:
+        # Allow read-only for safe methods
+        if request.method in permissions.SAFE_METHODS:
             return True
-        user = request.user
-        return user.is_authenticated and getattr(user, "role", "") == "organizer"
+        # Only organizers can create/modify events
+        return request.user.is_authenticated and request.user.role == 'organizer'
+    
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # Write permissions are only allowed to the organizer of the event
+        return obj.organizer == request.user
+
+class IsOrganizer(permissions.BasePermission):
+    """
+    Permission to only allow organizers to access certain endpoints.
+    """
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == 'organizer'
+
+class IsTicketOrganizer(permissions.BasePermission):
+    """
+    Permission to only allow event organizers to manage ticket categories.
+    """
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.is_authenticated and request.user.role == 'organizer'
+    
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.event.organizer == request.user
+
