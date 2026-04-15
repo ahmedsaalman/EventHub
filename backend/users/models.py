@@ -5,10 +5,11 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
 
     ROLE_CHOICES = (
+        ('admin', 'Admin'),
         ('organizer', 'Organizer'),
         ('viewer', 'Viewer'),
     )
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Viewer')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='viewer')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
