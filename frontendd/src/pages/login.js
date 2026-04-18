@@ -4,7 +4,11 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from 'next/link';
+import { useUser } from "../context/Usercontext";
+
 export default function Login() {
+  const {loginUser}=useUser()
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -25,13 +29,27 @@ export default function Login() {
       console.log(res.data);
 
       if (res.data.access) {
-        localStorage.setItem("token", res.data.access);
+
+        console.log(res.data.user)
+        const userData = { id:res.data.user.id,name: res.data.user.username, email: res.data.user.email, role: res.data.user.role };
+        const token = res.data.access;
+        loginUser(userData, token);
         setMessage("Login successful! Redirecting to dashboard...");
         
-        if(res.data.user.role==="organizer"){
+        // Add admin condition first
+        if (res.data.user.role === "admin") {
+          router.push("/adminis");
+        }
+        else if(res.data.user.role === "organizer"){
           router.push("/organizer");
         }
         else {
+          const check_order = localStorage.getItem('currentOrder'); 
+          if (check_order) {
+            router.push('/checkout');
+            return;
+          }
+          
           router.push("/dashboard");
         }
 
@@ -65,7 +83,7 @@ export default function Login() {
         />
       </Head>
 
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-black to-purple-900">
         <div className="glass-effect w-full max-w-md p-8 shadow-2xl rounded-2xl">
           {/* Logo and Title */}
           <div className="text-center mb-8">
