@@ -51,7 +51,7 @@ export default function Register() {
 
   return (
 <>
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-b from-black to-purple-900 flex items-center justify-center p-4">
         <div className="max-w-md w-full">
      
           <div className="absolute inset-0 overflow-hidden">
