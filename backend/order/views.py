@@ -343,10 +343,25 @@ class OrderViewSet(viewsets.ModelViewSet):
         # Create order items and generate tickets
         for item in items_data:
             try:
-                ticket_category = TicketCategory.objects.get(
-                    name=item['ticket_category'],
-                    event=order.event
-                )
+                ticket_category_value = item.get('ticket_category')
+                ticket_category = None
+
+                if ticket_category_value:
+                    try:
+                        ticket_category = TicketCategory.objects.get(
+                            id=ticket_category_value,
+                            event=order.event
+                        )
+                    except (TicketCategory.DoesNotExist, ValueError):
+                        ticket_category = TicketCategory.objects.get(
+                            name=ticket_category_value,
+                            event=order.event
+                        )
+                else:
+                    return Response(
+                        {'error': 'ticket_category is required for each ticket item'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
                 
                 if ticket_category.quantity < item['quantity']:
                     return Response(

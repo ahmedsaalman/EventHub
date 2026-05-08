@@ -7,7 +7,7 @@ import { apiUrl } from '@/lib/api';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, token } = useUser();
   const [order, setOrder] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('card');
@@ -25,6 +25,11 @@ export default function CheckoutPage() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    if (!user || !token) {
+      router.push('/login');
+      return;
+    }
+
     const storedOrder = localStorage.getItem('currentOrder');
     if (storedOrder) {
       setOrder(JSON.parse(storedOrder));
@@ -63,7 +68,7 @@ export default function CheckoutPage() {
         payment_method: paymentMethod,
         total_amount: order.total,
         tickets: order.tickets.map(t => ({
-          ticket_category: t.type,
+          ticket_category: t.ticket_category,
           quantity: t.quantity,
           price: t.price
         }))
@@ -72,7 +77,8 @@ export default function CheckoutPage() {
       const response = await fetch(apiUrl('/api/order/orders/'), {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
         },
         body: JSON.stringify(payload)
       });

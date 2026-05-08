@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import { useRouter } from 'next/router';
 import { apiUrl } from '@/lib/api';
+import { useUser } from '../context/Usercontext';
 
 export default function TicketPage() {
   const router = useRouter();
   const { eventId } = router.query;
+  const { user, token } = useUser();
 
   const [event, setEvent] = useState(null);
   const [selectedTickets, setSelectedTickets] = useState({});
@@ -96,6 +98,44 @@ export default function TicketPage() {
   };
 
   const getTotalTickets = () => Object.values(selectedTickets).reduce((sum, quantity) => sum + quantity, 0);
+
+  const handleProceedToPay = () => {
+    if (!transformedEvent) return;
+
+    if (getTotalTickets() === 0) {
+      alert('Please select at least one ticket.');
+      return;
+    }
+
+    if (!user || !token) {
+      router.push('/login');
+      return;
+    }
+
+    const orderData = {
+      event: {
+        id: transformedEvent.id,
+        name: transformedEvent.name,
+        date: transformedEvent.date,
+        time: transformedEvent.time,
+        location: transformedEvent.location,
+        image: transformedEvent.image,
+      },
+      tickets: transformedEvent.categories
+        .filter((category) => selectedTickets[category.type] > 0)
+        .map((category) => ({
+          ticket_category: category.id,
+          type: category.type,
+          price: category.price,
+          quantity: selectedTickets[category.type],
+          total: category.price * selectedTickets[category.type],
+        })),
+      total: getTotalPrice(),
+    };
+
+    localStorage.setItem('currentOrder', JSON.stringify(orderData));
+    router.push('/checkout');
+  };
 
   if (loading) {
     return (
@@ -228,9 +268,16 @@ export default function TicketPage() {
                 )}
               </div>
 
-              <div className="mt-8 flex items-center justify-between border-t border-white/10 pt-6">
+              <div className="mt-8 flex flex-col gap-4 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between">
                 <div className="text-slate-300">Total</div>
                 <div className="text-2xl font-bold text-cyan-300">{getTotalPrice()} PKR</div>
+                <button
+                  onClick={handleProceedToPay}
+                  className="rounded-xl bg-cyan-600 px-6 py-3 font-semibold text-white hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={getTotalTickets() === 0}
+                >
+                  Proceed to Checkout
+                </button>
               </div>
             </div>
           </div>
