@@ -3,6 +3,7 @@ import axios from "axios";
 import { useUser } from '../context/Usercontext';
 import { createAPIService } from '../hooks/useAuth';
 import { useRouter } from "next/router";
+import { API_BASE_URL, apiUrl } from "@/lib/api";
 import { 
   UsersIcon, 
   CalendarIcon, 
@@ -47,7 +48,7 @@ export default function AdminPanel() {
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, type: null, id: null, name: '' });
   
   const router = useRouter();
-  const API = "http://127.0.0.1:8000/api/adminis";
+  const API = apiUrl("/api/adminis");
 
   // Initialize API Service
   const apiService = useMemo(() => {
@@ -98,7 +99,7 @@ export default function AdminPanel() {
   const normalizeImageUrl = useCallback((url) => {
     if (!url || typeof url !== 'string' || url.trim() === '') return null;
     const trimmedUrl = url.trim();
-    const baseUrl = 'http://127.0.0.1:8000';
+    const baseUrl = API_BASE_URL;
     if (/^https?:\/\//i.test(trimmedUrl)) return trimmedUrl;
     if (trimmedUrl.startsWith('/media/')) return `${baseUrl}${trimmedUrl}`;
     if (trimmedUrl.startsWith('/static/')) return `${baseUrl}${trimmedUrl}`;

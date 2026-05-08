@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useUser } from '../context/Usercontext';
 import { useRouter } from "next/router";
+import { API_BASE_URL, apiUrl } from "@/lib/api";
 import { 
   UsersIcon, 
   CalendarIcon, 
@@ -54,7 +55,7 @@ export default function AdminPanel() {
   });
   
   const router = useRouter();
-  const API = "http://127.0.0.1:8000/api/adminis";
+  const API = apiUrl("/api/adminis");
 
   // Single Responsibility: central auth headers
   const getAuthHeaders = useCallback(() => {
@@ -198,7 +199,7 @@ export default function AdminPanel() {
   const resolveImageUrl = useCallback((url) => {
     if (!url) return null;
     if (/^https?:\/\//i.test(url)) return url;
-    return `http://127.0.0.1:8000${url.startsWith('/') ? url : `/${url}`}`;
+    return `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`;
   }, []);
 
   if (authLoading) {

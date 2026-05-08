@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { useUser } from '../context/Usercontext';
+import { apiUrl } from '@/lib/api';
 
 import jsQR from 'jsqr';
 
@@ -87,7 +88,7 @@ const captureAndScan = async () => {
     setScanResult(null);
     const eventId = router.query.eventId;
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/order/orders/scan-ticket/?event_id=${eventId}`, {
+      const response = await fetch(apiUrl(`/api/order/orders/scan-ticket/?event_id=${eventId}`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

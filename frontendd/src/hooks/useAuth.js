@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiUrl } from "../lib/api";
 
 export function useAuth() {
   const [token, setToken] = useState(null);
@@ -25,7 +26,7 @@ export function useAuth() {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login/', {
+      const response = await fetch(apiUrl('/api/auth/login/'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +56,7 @@ export function useAuth() {
 
   const register = async (userData) => {
     try {
-      const response = await fetch('http://localhost:8000/api/auth/register/', {
+      const response = await fetch(apiUrl('/api/auth/register/'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +91,7 @@ export function useAuth() {
       throw new Error('No refresh token available');
     }
 
-    const response = await fetch('http://localhost:8000/api/auth/token/refresh/', {
+    const response = await fetch(apiUrl('/api/auth/token/refresh/'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -121,7 +122,7 @@ export function useAuth() {
 }
 
 export const createAPIService = (auth) => {
-  const BASE_URL = 'http://localhost:8000/api';
+  const BASE_URL = apiUrl('/api');
 
   const makeRequest = async (endpoint, options = {}) => {
     const url = `${BASE_URL}${endpoint}`;

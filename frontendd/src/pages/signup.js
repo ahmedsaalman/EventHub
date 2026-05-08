@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { apiUrl } from "@/lib/api";
 export default function Register() {
   const [formData, setFormData] = useState({
     username: '',
@@ -27,7 +28,7 @@ export default function Register() {
     setError('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/auth/register/', formData);
+      const response = await axios.post(apiUrl('/api/auth/register/'), formData);
 
       if (response.status === 201) {
        

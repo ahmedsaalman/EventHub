@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { useUser } from '../context/Usercontext';
+import { apiUrl } from "@/lib/api";
 
 import Layout from "@/components/Layout";
 export default function Home() {
@@ -21,7 +22,7 @@ export default function Home() {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://127.0.0.1:8000/api/public/all_events/');
+        const response = await fetch(apiUrl('/api/public/all_events/'));
         
         if (!response.ok) {
           throw new Error('Failed to fetch events');

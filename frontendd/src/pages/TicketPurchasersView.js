@@ -13,8 +13,9 @@ import {
   CreditCardIcon,
   UserCircleIcon
 } from '@heroicons/react/24/outline';
+import { apiUrl } from '@/lib/api';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = apiUrl('/api');
 
 const TicketPurchasersView = ({ eventId }) => {
   const [attendees, setAttendees] = useState([]);

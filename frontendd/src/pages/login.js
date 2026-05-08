@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from 'next/link';
 import { useUser } from "../context/Usercontext";
+import { apiUrl } from "@/lib/api";
 
 export default function Login() {
   const {loginUser}=useUser()
@@ -21,7 +22,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/auth/login/", {
+      const res = await axios.post(apiUrl("/api/auth/login/"), {
         email,
         password,
       });

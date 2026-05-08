@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { useUser } from '../context/Usercontext';
+import { apiUrl } from '@/lib/api';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -68,7 +69,7 @@ export default function CheckoutPage() {
         }))
       };
 
-      const response = await fetch('http://127.0.0.1:8000/api/order/orders/', {
+      const response = await fetch(apiUrl('/api/order/orders/'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

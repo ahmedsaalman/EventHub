@@ -9,6 +9,7 @@ import {
   SparklesIcon
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
+import { apiUrl } from '@/lib/api';
 export default function EmailAllAttendees() {
 
   const [eventId, setEventId] = useState(null);
@@ -54,7 +55,7 @@ export default function EmailAllAttendees() {
       setError(null);
       setSuccess(null);
 
-      const response = await fetch('http://localhost:8000/api/order/orders/event/email_all/', {
+      const response = await fetch(apiUrl('/api/order/orders/event/email_all/'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

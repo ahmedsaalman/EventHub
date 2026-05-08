@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { useRouter } from 'next/router';
+import { apiUrl } from '@/lib/api';
 
 export default function TicketPage() {
   const [selectedTickets, setSelectedTickets] = useState({});
@@ -22,7 +23,7 @@ export default function TicketPage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`http://localhost:8000/api/public/events/${eventId}/`);
+      const response = await fetch(apiUrl(`/api/public/events/${eventId}/`));
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

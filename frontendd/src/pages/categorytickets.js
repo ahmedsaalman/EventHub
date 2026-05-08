@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import Layout from "../components/Layout";
+import { apiUrl } from "@/lib/api";
 
 export default function CategoryEvents() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function CategoryEvents() {
       setError(null);
       
       const response = await fetch(
-        `http://127.0.0.1:8000/api/public/events/category/${category.toLowerCase()}/`
+        apiUrl(`/api/public/events/category/${category.toLowerCase()}/`)
       );
       
       if (!response.ok) {
