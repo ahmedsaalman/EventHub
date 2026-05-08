@@ -168,12 +168,21 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    "https://event-hub-pk.vercel.app",
-    "https://event-hub-orcin-zeta.vercel.app",
-    "https://event-hub-ahmed-salmans-projects-ceeb7fbc.vercel.app",
-    "http://localhost:3000",
+CORS_ALLOWED_ORIGINS = env_list(
+    "CORS_ALLOWED_ORIGINS",
+    "https://event-hub-pk.vercel.app,"
+    "https://event-hub-orcin-zeta.vercel.app,"
+    "https://event-hub-ahmed-salmans-projects-ceeb7fbc.vercel.app,"
+    "http://localhost:3000"
+)
+
+# Allow Vercel preview URLs.
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
 ]
+
+# Optional escape hatch for debugging CORS issues.
+CORS_ALLOW_ALL_ORIGINS = env_bool("CORS_ALLOW_ALL_ORIGINS", False)
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "authorization",
