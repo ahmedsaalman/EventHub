@@ -167,10 +167,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = env_list(
-    "DJANGO_CORS_ALLOWED_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000",
-)
+CORS_ALLOWED_ORIGINS = [
+    "https://event-hub-pk.vercel.app",
+    "https://event-hub-orcin-zeta.vercel.app",
+    "https://event-hub-ahmed-salmans-projects-ceeb7fbc.vercel.app",
+    "http://localhost:3000",
+]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "authorization",
