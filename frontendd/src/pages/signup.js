@@ -28,16 +28,32 @@ export default function Register() {
     setError('');
 
     try {
-      const response = await axios.post(apiUrl('/api/auth/register/'), formData);
+      const payload = {
+        ...formData,
+        username: formData.username?.trim() || formData.email?.trim(),
+        email: formData.email?.trim(),
+      };
+
+      const response = await axios.post(apiUrl('/api/auth/register/'), payload);
 
       if (response.status === 201) {
        
         router.push('/login');
       } else {
-        setError(data.message || 'Registration failed');
+        setError('Registration failed');
       }
     } catch (err) {
-      setError(err.response?.data.message || 'Registration failed');
+      const apiError = err.response?.data;
+      if (typeof apiError === 'string') {
+        setError(apiError);
+      } else if (apiError && typeof apiError === 'object') {
+        const fieldMessages = Object.entries(apiError)
+          .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+          .join(' | ');
+        setError(fieldMessages || 'Registration failed');
+      } else {
+        setError('Registration failed');
+      }
     } finally {
       setIsLoading(false);
     }
