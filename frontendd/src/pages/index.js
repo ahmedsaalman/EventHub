@@ -23,7 +23,7 @@ export default function Home() {
       try {
         setLoading(true);
         // Use relative URL so Next.js rewrite proxies it to Django over HTTP (avoids browser HSTS/SSL upgrade)
-        const response = await fetch('/api/public/all_events/', {
+        const response = await fetch(apiUrl('/api/public/all_events/'), {
           method: 'GET',
           headers: { 'Accept': 'application/json' },
         });

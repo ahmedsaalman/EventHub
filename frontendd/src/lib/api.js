@@ -1,6 +1,8 @@
 const DEFAULT_API_BASE_URL = ""; // Empty base lets Next.js rewrites proxy to Django backend
 
-const envBaseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL || "").trim().replace(/\/+$/, "");
+const configuredBaseUrl =
+  process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const envBaseUrl = configuredBaseUrl.trim().replace(/\/+$/, "");
 const isLocalBackendUrl =
   /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(envBaseUrl);
 
