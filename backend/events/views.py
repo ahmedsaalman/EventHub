@@ -281,6 +281,26 @@ class TicketCategoryViewSet(viewsets.ModelViewSet):
 # ORDER VIEWS (Single Responsibility)
 # ==========================================
 
+class PublicTicketCategoryView(generics.ListAPIView):
+    """Public view to list ticket categories for an event"""
+    permission_classes = [AllowAny]
+    serializer_class = TicketCategorySerializer
+
+    def get_queryset(self):
+        event_pk = self.kwargs.get('event_pk')
+        return TicketCategory.objects.filter(
+            event_id=event_pk,
+            event__is_published=True
+        )
+
+
+class PublicEventDetailView(generics.RetrieveAPIView):
+    """Returns event + ticket categories for public ticket page"""
+    permission_classes = [AllowAny]
+    serializer_class = EventSerializer
+    queryset = Event.objects.filter(is_published=True)
+
+
 class OrderViewSet(viewsets.ModelViewSet):
     """
     ViewSet for viewing and creating orders.
