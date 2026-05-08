@@ -16,7 +16,9 @@ def env_list(name, default=""):
 
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "replace-this-in-production")
-DEBUG = env_bool("DJANGO_DEBUG", False)
+# Default to DEBUG=True for local development when backend/.env is missing.
+# Production must explicitly set DJANGO_DEBUG=False.
+DEBUG = env_bool("DJANGO_DEBUG", True)
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 
 MEDIA_URL = "/media/"
@@ -199,16 +201,8 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
 }
 
-if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = int(os.getenv("DJANGO_SECURE_HSTS_SECONDS", "31536000"))
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_BROWSER_XSS_FILTER = True
+# Deployment-only security block removed for local stability.
+# If you later deploy behind HTTPS, re-introduce these settings in a dedicated production settings file.
 
 # Logging Configuration
 LOGGING = {

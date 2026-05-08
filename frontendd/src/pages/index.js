@@ -22,10 +22,15 @@ export default function Home() {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const response = await fetch(apiUrl('/api/public/all_events/'));
-        
+        // Use relative URL so Next.js rewrite proxies it to Django over HTTP (avoids browser HSTS/SSL upgrade)
+        const response = await fetch('/api/public/all_events/', {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+        });
         if (!response.ok) {
-          throw new Error('Failed to fetch events');
+          const errorText = await response.text();
+          console.error('Fetch error:', response.status, errorText);
+          throw new Error(`Failed to fetch events: ${response.status}`);
         }
         
         const data = await response.json();

@@ -14,7 +14,8 @@ This project is prepared to deploy with SQLite retained as requested.
 ## 2) Frontend environment
 
 1. Copy `frontendd/.env.example` to `frontendd/.env.local`.
-2. Set:
+2. For local development, keep `NEXT_PUBLIC_API_BASE_URL` empty so frontend uses Next.js rewrites (`/api/*`) to your Django HTTP server.
+3. For production, set:
    - `NEXT_PUBLIC_API_BASE_URL=https://your-backend-domain.com`
 
 ## 3) Build & run
