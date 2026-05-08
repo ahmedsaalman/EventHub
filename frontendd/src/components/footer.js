@@ -24,10 +24,10 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4 text-lg">Platform</h3>
             <ul className="space-y-3">
               {[
-                { name: 'Browse Events', href: '#events' },
-                { name: 'Create Event', href: '/create' },
+                { name: 'Browse Events', href: '/?scrollTo=events' },
+                { name: 'Create Event', href: '/organizer' },
                 { name: 'Pricing', href: '/pricing' },
-                { name: 'Features', href: '#features' }
+                { name: 'Features', href: '/features' }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 
@@ -68,14 +68,15 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4 text-lg">Connect With Us</h3>
             <div className="flex space-x-4 mb-6">
               {[
-                { icon: 'fab fa-twitter', href: '#' },
-                { icon: 'fab fa-facebook', href: '#' },
-                { icon: 'fab fa-instagram', href: '#' },
-                { icon: 'fab fa-linkedin', href: '#' }
+                { icon: 'fab fa-instagram', href: 'https://instagram.com/_1hmed_' },
+                { icon: 'fab fa-linkedin', href: 'https://www.linkedin.com/in/ahmad04salman/' },
+                { icon: 'fab fa-github', href: 'https://github.com/ahmedsaalman/EventHub' }
               ].map((social, index) => (
                 <a
                   key={index}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-white bg-opacity-10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-opacity-20 transition duration-300"
                 >
                   <i className={social.icon}></i>
@@ -83,8 +84,8 @@ export default function Footer() {
               ))}
             </div>
             <div className="text-gray-400 text-sm">
-              <p>📧 hello@eventhub.com</p>
-              <p className="mt-1">📞 +1 (555) 123-4567</p>
+              <p>Owner: Ahmed Salman</p>
+              <p className="mt-1">Email: ahmad04salman@gmail.com</p>
             </div>
           </div>
         </div>
@@ -92,16 +93,16 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white border-opacity-10 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            &copy; 2024 EventHub. All rights reserved.
+            &copy; 2026 EventHub. Built with Next.js + Django REST Framework.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link href="/terms" className="text-gray-400 hover:text-white text-sm transition duration-300">
+            <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition duration-300">
               Terms of Service
             </Link>
             <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition duration-300">
               Privacy Policy
             </Link>
-            <Link href="/cookies" className="text-gray-400 hover:text-white text-sm transition duration-300">
+            <Link href="/privacy#cookies" className="text-gray-400 hover:text-white text-sm transition duration-300">
               Cookie Policy
             </Link>
           </div>

@@ -32,13 +32,13 @@ export default function Header() {
 
           <nav className="hidden md:flex space-x-8">
             <a 
-              onClick={() => router.push('/dashboard?scrollTo=events')} 
+              onClick={() => router.push('/?scrollTo=events')} 
               className="text-white hover:text-purple-300 transition duration-300 cursor-pointer"
             >
               Events
             </a>
             <a 
-              onClick={() => router.push('/dashboard?scrollTo=categories')} 
+              onClick={() => router.push('/?scrollTo=categories')} 
               className="text-white hover:text-purple-300 transition duration-300 cursor-pointer"
             >
               Categories
