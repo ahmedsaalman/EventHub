@@ -1,5 +1,8 @@
 # EventHub - Event Management & Ticketing System (still in progress)
 
+## Live
+https://event-hub-pk.vercel.app
+
 ## Overview
 EventHub is a scalable and secure event management and ticketing platform. It allows users to browse events, purchase tickets, and use QR code-based digital ticketing for entry. The system is built using a **Next.js frontend** and a **Django REST Framework backend**, providing a seamless user experience for both event organizers and attendees.
 
