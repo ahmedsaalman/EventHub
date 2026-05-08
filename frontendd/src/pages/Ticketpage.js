@@ -23,13 +23,15 @@ export default function TicketPage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(apiUrl(`/api/public/events/${eventId}/`));
-      
+      // const response = await fetch(apiUrl(`/api/public/events/${eventId}/`));
+      const response = await fetch(apiUrl(`/api/all_events/${eventId}/`));
+
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.detail || `Failed to fetch event data: ${response.status}`);
       }
-      
+
       const eventData = await response.json();
       setEvent(eventData);
     } catch (err) {
@@ -64,17 +66,17 @@ export default function TicketPage() {
         hour12: true
       }) : '7:00 PM',
       image: microsite.banner_url || backendEvent.image_url || "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-      
+
       // Use microsite about section or default features
-      features: microsite.about_section ? 
-        microsite.about_section.split('\n').filter(line => line.trim()) : 
+      features: microsite.about_section ?
+        microsite.about_section.split('\n').filter(line => line.trim()) :
         [
           "Live Music Performance",
-          "Stunning Visual Effects", 
+          "Stunning Visual Effects",
           "Food and Beverage Counters",
           "Complimentary Parking",
         ],
-      
+
       // Transform ticket categories from backend
       categories: tickets.map((ticket, index) => ({
         type: ticket.name,
@@ -100,12 +102,12 @@ export default function TicketPage() {
 
       const maxQuantity = category.available_quantity || category.quantity;
       const newQuantity = Math.max(0, Math.min(quantity, maxQuantity));
-      
+
       if (newQuantity === 0) {
         const { [categoryType]: removed, ...rest } = prev;
         return rest;
       }
-      
+
       return {
         ...prev,
         [categoryType]: newQuantity
@@ -126,60 +128,60 @@ export default function TicketPage() {
     return Object.values(selectedTickets).reduce((sum, quantity) => sum + quantity, 0);
   };
 
-const handleProceedToPay = async () => {
-  if (!transformedEvent) return;
+  const handleProceedToPay = async () => {
+    if (!transformedEvent) return;
 
 
-  if (getTotalTickets() === 0) {
-    alert("Please select at least one ticket.");
-    return;
-  }
+    if (getTotalTickets() === 0) {
+      alert("Please select at least one ticket.");
+      return;
+    }
 
-  setIsBooking(true);
-  try {
-    // Prepare order data
-    const orderData = {
-      id: `ORD-${Date.now()}`, // simple order id
-      event: {
-        id: transformedEvent.id,
-        name: transformedEvent.name,
-        date: transformedEvent.date,
-        time: transformedEvent.time,
-        location: transformedEvent.location,
-        image: transformedEvent.image
-      },
-      tickets: transformedEvent.categories
-        .filter(cat => selectedTickets[cat.type] > 0)
-        .map(cat => ({
-          type: cat.type,
-          price: cat.price,
-          quantity: selectedTickets[cat.type],
-          total: cat.price * selectedTickets[cat.type]
-        })),
-      subtotal: getTotalPrice(),
-      serviceFee: Math.round(getTotalPrice() * 0.05), 
-      tax: Math.round(getTotalPrice() * 0.1), 
-      total: Math.round(getTotalPrice() * 1.15), 
-      orderDate: new Date().toISOString()
-    };
+    setIsBooking(true);
+    try {
+      // Prepare order data
+      const orderData = {
+        id: `ORD-${Date.now()}`, // simple order id
+        event: {
+          id: transformedEvent.id,
+          name: transformedEvent.name,
+          date: transformedEvent.date,
+          time: transformedEvent.time,
+          location: transformedEvent.location,
+          image: transformedEvent.image
+        },
+        tickets: transformedEvent.categories
+          .filter(cat => selectedTickets[cat.type] > 0)
+          .map(cat => ({
+            type: cat.type,
+            price: cat.price,
+            quantity: selectedTickets[cat.type],
+            total: cat.price * selectedTickets[cat.type]
+          })),
+        subtotal: getTotalPrice(),
+        serviceFee: Math.round(getTotalPrice() * 0.05),
+        tax: Math.round(getTotalPrice() * 0.1),
+        total: Math.round(getTotalPrice() * 1.15),
+        orderDate: new Date().toISOString()
+      };
 
-  localStorage.setItem('currentOrder', JSON.stringify(orderData));
+      localStorage.setItem('currentOrder', JSON.stringify(orderData));
 
-  const token = localStorage.getItem('token'); 
-  if (!token) {
-    router.push('/login');
-    return;
-  }
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
 
-    // Redirect to checkout page
-    router.push('/checkout');
-  } catch (error) {
-    console.error('Error creating order:', error);
-    alert(`Failed to proceed: ${error.message}`);
-  } finally {
-    setIsBooking(false);
-  }
-};
+      // Redirect to checkout page
+      router.push('/checkout');
+    } catch (error) {
+      console.error('Error creating order:', error);
+      alert(`Failed to proceed: ${error.message}`);
+    } finally {
+      setIsBooking(false);
+    }
+  };
 
 
   const hasSelectedTickets = getTotalTickets() > 0;
@@ -218,13 +220,13 @@ const handleProceedToPay = async () => {
               {error}
             </div>
             <div className="flex gap-4 justify-center">
-              <button 
+              <button
                 onClick={() => router.push('/events')}
                 className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-xl transition-colors"
               >
                 Browse Events
               </button>
-              <button 
+              <button
                 onClick={fetchEventData}
                 className="bg-slate-600 hover:bg-slate-700 text-white px-6 py-3 rounded-xl transition-colors"
               >
@@ -244,7 +246,7 @@ const handleProceedToPay = async () => {
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
           <div className="text-center">
             <div className="text-2xl text-slate-300 mb-4">Event not found</div>
-            <button 
+            <button
               onClick={() => router.push('/events')}
               className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-xl transition-colors"
             >
@@ -270,7 +272,7 @@ const handleProceedToPay = async () => {
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"></div>
-          
+
           {/* Event Info Overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
             <div className="max-w-7xl mx-auto">
@@ -312,7 +314,7 @@ const handleProceedToPay = async () => {
                       <div className="font-semibold text-slate-200 truncate">{transformedEvent.location}</div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center border border-blue-500/30 flex-shrink-0">
                       <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
@@ -323,7 +325,7 @@ const handleProceedToPay = async () => {
                       <div className="text-sm text-slate-400">{transformedEvent.time}</div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center border border-purple-500/30 flex-shrink-0">
                       <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
@@ -341,7 +343,7 @@ const handleProceedToPay = async () => {
                 <h3 className="text-xl font-bold mb-4 text-cyan-400 font-serif">Event Features</h3>
                 <div className="grid grid-cols-1 gap-3">
                   {transformedEvent.features.map((feature, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="flex items-center space-x-3 p-3 rounded-xl bg-slate-700/30 hover:bg-slate-700/50 transition-all duration-300 border border-slate-600/30"
                     >
@@ -373,11 +375,10 @@ const handleProceedToPay = async () => {
                     transformedEvent.categories.map((category, index) => (
                       <div
                         key={category.id || index}
-                        className={`border-2 rounded-2xl p-6 transition-all duration-300 ${
-                          selectedTickets[category.type] > 0
-                            ? 'border-cyan-500 bg-cyan-500/10 shadow-lg shadow-cyan-500/20'
-                            : 'border-slate-700 bg-slate-700/30'
-                        } ${!category.available && 'opacity-40 cursor-not-allowed'}`}
+                        className={`border-2 rounded-2xl p-6 transition-all duration-300 ${selectedTickets[category.type] > 0
+                          ? 'border-cyan-500 bg-cyan-500/10 shadow-lg shadow-cyan-500/20'
+                          : 'border-slate-700 bg-slate-700/30'
+                          } ${!category.available && 'opacity-40 cursor-not-allowed'}`}
                       >
                         <div className="flex flex-col md:flex-row md:items-center justify-between">
                           <div className="flex-1">
@@ -395,7 +396,7 @@ const handleProceedToPay = async () => {
                                 <p className="text-slate-300 text-sm mb-3 line-clamp-2">
                                   {category.description}
                                 </p>
-                                
+
                                 {/* Benefits */}
                                 <div className="flex flex-wrap gap-2">
                                   {category.benefits.map((benefit, idx) => (
@@ -415,8 +416,8 @@ const handleProceedToPay = async () => {
                             {/* Availability */}
                             <div className="text-right min-w-[120px]">
                               <div className={`text-sm font-medium ${category.available ? 'text-green-400' : 'text-red-400'}`}>
-                                {category.available ? 
-                                  `${category.available_quantity || category.quantity} available` : 
+                                {category.available ?
+                                  `${category.available_quantity || category.quantity} available` :
                                   'Sold Out'
                                 }
                               </div>
@@ -432,11 +433,11 @@ const handleProceedToPay = async () => {
                                 >
                                   −
                                 </button>
-                                
+
                                 <span className="w-8 text-center font-bold text-slate-100 text-lg flex-shrink-0">
                                   {selectedTickets[category.type] || 0}
                                 </span>
-                                
+
                                 <button
                                   onClick={() => updateTicketQuantity(category.type, (selectedTickets[category.type] || 0) + 1)}
                                   disabled={(selectedTickets[category.type] || 0) >= (category.available_quantity || category.quantity)}
@@ -462,13 +463,13 @@ const handleProceedToPay = async () => {
                 {hasSelectedTickets && (
                   <div className="mt-8 border-t border-slate-700 pt-6">
                     <h3 className="text-xl font-bold mb-4 text-cyan-400 font-serif">Order Summary</h3>
-                    
+
                     {/* Selected Tickets List */}
                     <div className="space-y-3 mb-6">
                       {Object.entries(selectedTickets).map(([categoryType, quantity]) => {
                         const category = transformedEvent.categories.find(cat => cat.type === categoryType);
                         if (!category) return null;
-                        
+
                         return (
                           <div key={categoryType} className="flex justify-between items-center bg-slate-700/30 rounded-xl p-4 border border-slate-600/30">
                             <div className="flex items-center space-x-3 min-w-0 flex-1">
