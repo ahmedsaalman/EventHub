@@ -28,6 +28,11 @@ def send_order_confirmation_email(order, request):
 
     """
     try:
+        if not getattr(settings, "EMAIL_ENABLED", False):
+            return False
+        if not settings.EMAIL_HOST_USER or not settings.EMAIL_HOST_PASSWORD:
+            return False
+
         user_email = order.user.email
         user_name = order.user.first_name or order.user.username
         event_name = order.event.title
@@ -195,7 +200,7 @@ Vardaan Wear Events
                     email.attach(ticket_file['name'], f.read(), 'image/png')
         
         # Send email
-        email.send(fail_silently=False)
+        email.send(fail_silently=True)
         
 
         
@@ -389,7 +394,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             # Send confirmation email with tickets
-        email_sent = send_order_confirmation_email(order, request)
+        send_order_confirmation_email(order, request)
     
         # Return order with tickets
         serializer = OrderSerializers(order, context={'request': request})
