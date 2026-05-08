@@ -13,6 +13,14 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: "/ticketpage",
+        destination: "/Ticketpage",
+      },
+      {
+        source: "/e",
+        destination: "/Ticketpage",
+      },
+      {
         source: "/api/:path*",
         destination: `${DJANGO_BACKEND_URL}/api/:path*/`,
       },
