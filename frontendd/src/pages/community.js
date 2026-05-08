@@ -32,7 +32,7 @@ export default function CommunityPage() {
 
           <div className="mt-10">
             <Link href="/features" className="text-purple-400 hover:text-purple-300">
-              Explore platform features ->
+              Explore platform features {"->"}
             </Link>
           </div>
         </div>
